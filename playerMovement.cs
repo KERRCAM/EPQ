@@ -6,10 +6,12 @@ public class playerMovement : MonoBehaviour
     [SerializeField] private float Yspeed;
     private Rigidbody2D body;
     [SerializeField] private bool inAir;
+    public Vector2 respawnPoint;
 
     private void Awake()
     {
         body = GetComponent<Rigidbody2D>();
+        respawnPoint = transform.position;
     }
 
     private void Update()
@@ -30,5 +32,14 @@ public class playerMovement : MonoBehaviour
         if (other.gameObject.CompareTag("ground"))
             inAir = true;
     }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.tag == "checkpoint")
+        {
+            respawnPoint = transform.position;
+        }
+    } 
+
 
 }
