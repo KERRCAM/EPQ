@@ -31,7 +31,7 @@ public class playerMovement : MonoBehaviour
     {
         if (other.gameObject.CompareTag("ground"))
             inAir = true;
-    }
+    } 
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -39,7 +39,18 @@ public class playerMovement : MonoBehaviour
         {
             respawnPoint = transform.position;
         }
-    } 
+    }
 
-
+    
+    private void OnTriggerEnter(Collision2D other)
+    {
+        if (other.gameObject.CompareTag("ground"))
+            inAir = false;
+    }
+    private void OnTriggerExit(Collision2D other)
+    {
+        if (other.gameObject.CompareTag("ground"))
+            inAir = true;
+    }
+    
 }
