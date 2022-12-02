@@ -13,6 +13,9 @@ public class playerMovement : MonoBehaviour
     [SerializeField] private bool wAvailable = false;
     [SerializeField] private bool aAvailable = false;
     [SerializeField] private bool dAvailable = false;
+    [SerializeField] private bool eWind = false;
+    [SerializeField] private bool mouse1Wind = false;
+    [SerializeField] private float wind = 0;
     
 
     private void Awake()
@@ -23,7 +26,7 @@ public class playerMovement : MonoBehaviour
 
     private void Update()
     {
-        body.velocity = new Vector2(0 * Xspeed, body.velocity.y);
+        body.velocity = new Vector2(wind * Xspeed, body.velocity.y); // for slipy tiles could find a way to make this line redundant again
         if (Input.GetKey(KeyCode.D) && dAvailable == true || Input.GetKey(KeyCode.RightArrow) && rightArrowAvailable == true)
         {
             body.velocity = new Vector2(1 * Xspeed, body.velocity.y);
@@ -37,7 +40,10 @@ public class playerMovement : MonoBehaviour
         {
             body.velocity = new Vector2(body.velocity.x, Yspeed);
         }
-     
+        if (Input.GetKey(KeyCode.E) && eWind == true || Input.GetKey(KeyCode.Mouse1) && mouse1Wind == true)
+        {
+            wind = -wind;
+        }
 
     }
 
@@ -105,6 +111,16 @@ public class playerMovement : MonoBehaviour
             wAvailable = true;
             rightArrowAvailable = true;
         }
+        if (other.gameObject.CompareTag("eWind"))
+        {
+            eWind = true;
+            wind = 0.2f;
+        }
+        if (other.gameObject.CompareTag("mouse1Wind"))
+        {
+            mouse1Wind = true;
+            wind = 0.2f;
+        }
     }
 
     private void OnTriggerExit2D(Collider2D other)
@@ -149,9 +165,19 @@ public class playerMovement : MonoBehaviour
             wAvailable = false;
             rightArrowAvailable = false;
         }
+        if (other.gameObject.CompareTag("eWind"))
+        {
+            eWind = false;
+            wind = 0f;
+        }
+        if (other.gameObject.CompareTag("mouse1Wind"))
+        {
+            mouse1Wind = false;
+            wind = 0f;
+        }
     }
 
     
-
+    
     
 }
