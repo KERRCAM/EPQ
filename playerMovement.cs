@@ -7,15 +7,16 @@ public class playerMovement : MonoBehaviour
     private Rigidbody2D body;
     [SerializeField] private bool inAir;
     public Vector2 respawnPoint;
-    [SerializeField] private bool rightArrowAvailable = false;
-    [SerializeField] private bool leftArrowAvailable = false;
-    [SerializeField] private bool upArrowAvailable = false;
-    [SerializeField] private bool wAvailable = false;
-    [SerializeField] private bool aAvailable = false;
-    [SerializeField] private bool dAvailable = false;
+    [SerializeField] private bool rightArrowAvailable = true;
+    [SerializeField] private bool leftArrowAvailable = true;
+    [SerializeField] private bool upArrowAvailable = true;
+    [SerializeField] private bool wAvailable = true;
+    [SerializeField] private bool aAvailable = true;
+    [SerializeField] private bool dAvailable = true;
     [SerializeField] private bool eWind = false;
     [SerializeField] private bool mouse1Wind = false;
     [SerializeField] private float wind = 0;
+    [SerializeField] private bool slippy = false;
     
 
     private void Awake()
@@ -25,8 +26,11 @@ public class playerMovement : MonoBehaviour
     }
 
     private void Update()
-    {
-        body.velocity = new Vector2(wind * Xspeed, body.velocity.y); // for slipy tiles could find a way to make this line redundant again
+    { 
+        if (slippy == false)
+        {
+            body.velocity = new Vector2(wind * Xspeed, body.velocity.y);
+        }
         if (Input.GetKey(KeyCode.D) && dAvailable == true || Input.GetKey(KeyCode.RightArrow) && rightArrowAvailable == true)
         {
             body.velocity = new Vector2(1 * Xspeed, body.velocity.y);
@@ -37,8 +41,16 @@ public class playerMovement : MonoBehaviour
         }
 
         if (Input.GetKey(KeyCode.W) && inAir == false && wAvailable == true || Input.GetKey(KeyCode.UpArrow) && inAir == false && upArrowAvailable == true)
-        {
-            body.velocity = new Vector2(body.velocity.x, Yspeed);
+        { 
+            if (body.gravityScale < 0)
+            {
+                body.velocity = new Vector2(body.velocity.x, -Yspeed);
+            }
+            if (body.gravityScale > 0)
+            {
+
+                body.velocity = new Vector2(body.velocity.x, Yspeed);
+            }
         }
         if (Input.GetKey(KeyCode.E) && eWind == true || Input.GetKey(KeyCode.Mouse1) && mouse1Wind == true)
         {
@@ -80,36 +92,55 @@ public class playerMovement : MonoBehaviour
             wAvailable = true;
             leftArrowAvailable = true;
             rightArrowAvailable = true;
+            upArrowAvailable = false;
+            aAvailable = false;
+            dAvailable = false;
         }
         if (other.gameObject.CompareTag("P1LRP2U"))
         {
             aAvailable = true;
             dAvailable = true;
             upArrowAvailable = true;
+            leftArrowAvailable = false;
+            rightArrowAvailable = false;
+            wAvailable = false;
         }
         if (other.gameObject.CompareTag("P1RUP2L"))
         {
             wAvailable = true;
             dAvailable = true;
             leftArrowAvailable = true;
+            upArrowAvailable = false;
+            rightArrowAvailable = false;
+            aAvailable = false;
         }
         if (other.gameObject.CompareTag("P1L2LRU"))
         {
             aAvailable = true;
             rightArrowAvailable = true;
             upArrowAvailable = true;
+            leftArrowAvailable = false;
+            dAvailable = false;
+            wAvailable = false;
         }
         if (other.gameObject.CompareTag("P1RP2LU"))
         {
             dAvailable = true;
             leftArrowAvailable = true;
             upArrowAvailable = true;
+            rightArrowAvailable = false;
+            aAvailable = false;
+            wAvailable = false;
         }
         if (other.gameObject.CompareTag("P1LUP2R"))
         {
             aAvailable = true;
             wAvailable = true;
             rightArrowAvailable = true;
+            dAvailable = false;
+            leftArrowAvailable = false;
+            upArrowAvailable = false;
+
         }
         if (other.gameObject.CompareTag("eWind"))
         {
@@ -121,6 +152,10 @@ public class playerMovement : MonoBehaviour
             mouse1Wind = true;
             wind = 0.2f;
         }
+        if(other.gameObject.CompareTag("slippy"))
+        {
+            slippy = true;
+        }
     }
 
     private void OnTriggerExit2D(Collider2D other)
@@ -131,39 +166,39 @@ public class playerMovement : MonoBehaviour
         }
         if (other.gameObject.CompareTag("P1UP2LR"))
         {
-            wAvailable = false;
-            leftArrowAvailable = false;
-            rightArrowAvailable = false;
+            upArrowAvailable = true;
+            aAvailable = true;
+            dAvailable = true;
         }
         if (other.gameObject.CompareTag("P1LRP2U"))
         {
-            aAvailable = false;
-            dAvailable = false;
-            upArrowAvailable = false;
+            wAvailable = true;
+            leftArrowAvailable = true;
+            rightArrowAvailable = true;
         }
         if (other.gameObject.CompareTag("P1RUP2L"))
         {
-            dAvailable = false;
-            wAvailable = false;
-            leftArrowAvailable = false;
+            rightArrowAvailable = true;
+            upArrowAvailable = true;
+            aAvailable = true;
         }
         if (other.gameObject.CompareTag("P1LP2RU"))
         {
-            aAvailable = false;
-            rightArrowAvailable = false;
-            upArrowAvailable = false;
+            leftArrowAvailable = true;
+            dAvailable = true;
+            wAvailable = true;
         }
         if (other.gameObject.CompareTag("P1RP2LU"))
         {
-            dAvailable = false;
-            leftArrowAvailable = false;
-            upArrowAvailable = false;
+            rightArrowAvailable = true;
+            aAvailable = true;
+            wAvailable = true;
         }
         if (other.gameObject.CompareTag("P1LUP2R"))
         {
-            aAvailable = false;
-            wAvailable = false;
-            rightArrowAvailable = false;
+            leftArrowAvailable = true;
+            upArrowAvailable = true;
+            dAvailable = true;
         }
         if (other.gameObject.CompareTag("eWind"))
         {
@@ -174,6 +209,10 @@ public class playerMovement : MonoBehaviour
         {
             mouse1Wind = false;
             wind = 0f;
+        } 
+        if (other.gameObject.CompareTag("slippy"))
+        {
+            slippy = false;
         }
     }
 
@@ -181,3 +220,4 @@ public class playerMovement : MonoBehaviour
     
     
 }
+
