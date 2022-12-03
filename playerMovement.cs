@@ -17,7 +17,7 @@ public class playerMovement : MonoBehaviour
     [SerializeField] private bool mouse1Wind = false;
     [SerializeField] private float wind = 0;
     [SerializeField] private bool slippy = false;
-    
+
 
     private void Awake()
     {
@@ -114,7 +114,7 @@ public class playerMovement : MonoBehaviour
             rightArrowAvailable = false;
             aAvailable = false;
         }
-        if (other.gameObject.CompareTag("P1L2LRU"))
+        if (other.gameObject.CompareTag("P1LP2RU"))
         {
             aAvailable = true;
             rightArrowAvailable = true;
