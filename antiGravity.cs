@@ -6,16 +6,15 @@ public class antiGravity : MonoBehaviour
     private Rigidbody2D body; 
     [SerializeField] private bool qAntiGravV;
     [SerializeField] private bool mouse0AntiGravV;
-    [SerializeField] private bool qAntiGravH;
-    [SerializeField] private bool mouse0AntiGravH;
-    private float gravH;
+    [SerializeField] private bool splitAntiGravV;
+   
+    
     private float sleep;
     
 
     void Start()
     {
         body = GetComponent<Rigidbody2D>();
-        gravH = -9.81f;
         sleep = Time.time;
     }
 
@@ -27,15 +26,23 @@ public class antiGravity : MonoBehaviour
             body.gravityScale *= -1;
             sleep = Time.time;
         } 
-        if (Input.GetKey(KeyCode.Q) && qAntiGravH == true && Time.time - sleep > 2.5f || Input.GetKey(KeyCode.Mouse0) && mouse0AntiGravH == true && Time.time - sleep > 2.5f)
+        if (Input.GetKey(KeyCode.Q) && splitAntiGravV == true && Time.time - sleep > 2.5f)
+        { 
+            if (body.gravityScale > 0)
+            {
+                body.gravityScale *= -1;
+                sleep = Time.time;
+            }
+            
+            
+        }
+        if (Input.GetKey(KeyCode.Mouse0) && splitAntiGravV == true && Time.time - sleep > 2.5f)
         {
-            gravH = -gravH;
-            Physics2D.gravity = new Vector2(gravH, 0f);
-            sleep = Time.time;
-        } else if(Input.GetKey(KeyCode.S) && qAntiGravH == true && Time.time - sleep > 2.5f || Input.GetKey(KeyCode.DownArrow) && mouse0AntiGravH == true && Time.time - sleep > 2.5f)
-        {
-            Physics2D.gravity = new Vector2(0f, -9.81f);
-            sleep = Time.time;
+            if (body.gravityScale < 0)
+            {
+                body.gravityScale *= -1;
+                sleep = Time.time;
+            }
         }
     }
 
@@ -50,18 +57,14 @@ public class antiGravity : MonoBehaviour
         {
             mouse0AntiGravV = true;
         }
-        if (other.gameObject.CompareTag("qAntiGravH"))
+        if (other.gameObject.CompareTag("splitAntiGravV"))
         {
-            qAntiGravH = true;
-        }
-        if (other.gameObject.CompareTag("mouse0AntiGravH"))
-        {
-            mouse0AntiGravH = true;
+            splitAntiGravV = true;
         }
     }
 
 
-    private void OnCollisionExit2D(Collision2D other)
+    private void OnTriggerExit2D(Collider2D other)
     {
         if (other.gameObject.CompareTag("qAntiGravV"))
         {
@@ -71,18 +74,13 @@ public class antiGravity : MonoBehaviour
         {
             mouse0AntiGravV = false;
         }
-        if (other.gameObject.CompareTag("qAntiGravH"))
+        if (other.gameObject.CompareTag("splitAntiGravV"))
         {
-            qAntiGravH = false;
+            splitAntiGravV = false;
         }
-        if (other.gameObject.CompareTag("mouse0AntiGravH"))
-        {
-            mouse0AntiGravH = false;
-        }
-    } 
+    }
 
 
-    
 
 
 }
