@@ -17,46 +17,100 @@ public class playerMovement : MonoBehaviour
     [SerializeField] private bool mouse1Wind = false;
     [SerializeField] private float wind = 0;
     [SerializeField] private bool slippy = false;
+    [SerializeField] private bool slippyCollision = false;
+    private float lastDashV;
+    private float lastDashH;
+    [SerializeField] private bool eAdvMovV = false;
+    [SerializeField] private bool mouse1AdvMovV = false;
+    [SerializeField] private bool qAdvMovH = false;
+    [SerializeField] private bool mouse0AdvMovH = false;
+    private float velH = 1f;
+    private float velHT;
 
+
+    private void Start()
+    {
+        lastDashV = Time.time;
+        lastDashH = Time.time;
+        velHT = Time.time;
+    }
 
     private void Awake()
     {
         body = GetComponent<Rigidbody2D>();
         respawnPoint = transform.position;
+        
+
     }
 
-    private void Update()
+    private void Update() 
     { 
+        if (velH == 3f)
+        {
+            if(Time.time - lastDashH > 0.25f)
+            {
+                velH = 1f;
+            }
+        }
+        if (slippyCollision == true && inAir == false)
+        {
+            slippy = true;
+        }
+        if (inAir == true)
+        {
+            slippy = false;
+        }
         if (slippy == false)
         {
             body.velocity = new Vector2(wind * Xspeed, body.velocity.y);
         }
         if (Input.GetKey(KeyCode.D) && dAvailable == true || Input.GetKey(KeyCode.RightArrow) && rightArrowAvailable == true)
         {
-            body.velocity = new Vector2(1 * Xspeed, body.velocity.y);
+            body.velocity = new Vector2(velH * Xspeed, body.velocity.y);
         }
         if (Input.GetKey(KeyCode.A) && aAvailable == true || Input.GetKey(KeyCode.LeftArrow) && leftArrowAvailable == true)
         {
-            body.velocity = new Vector2(-1 * Xspeed, body.velocity.y);
+            body.velocity = new Vector2(-velH * Xspeed, body.velocity.y);
         }
 
         if (Input.GetKey(KeyCode.W) && inAir == false && wAvailable == true || Input.GetKey(KeyCode.UpArrow) && inAir == false && upArrowAvailable == true)
-        { 
+        {
             if (body.gravityScale < 0)
-            {
+            {  
                 body.velocity = new Vector2(body.velocity.x, -Yspeed);
             }
             if (body.gravityScale > 0)
             {
-
-                body.velocity = new Vector2(body.velocity.x, Yspeed);
+                body.velocity = new Vector2(body.velocity.x, Yspeed); 
             }
+            
         }
         if (Input.GetKey(KeyCode.E) && eWind == true || Input.GetKey(KeyCode.Mouse1) && mouse1Wind == true)
         {
             wind = -wind;
-        }
+        } 
 
+        if (Input.GetKey(KeyCode.E) && eAdvMovV == true && Time.time - lastDashV > 5f || Input.GetKey(KeyCode.Mouse1) && mouse1AdvMovV == true && Time.time - lastDashV > 5f)
+        {
+            if (body.gravityScale < 0)
+            {
+                body.velocity = new Vector2(body.velocity.x, 2*-Yspeed);
+                lastDashV = Time.time;
+            }
+            if (body.gravityScale > 0)
+            {
+                body.velocity = new Vector2(body.velocity.x, 2*Yspeed);
+                lastDashV = Time.time;
+            }
+        } 
+
+        if (Input.GetKey(KeyCode.Q) && qAdvMovH == true && Time.time - lastDashH > 5f || Input.GetKey(KeyCode.Mouse0) && mouse0AdvMovH == true && Time.time - lastDashH > 5f)
+        {
+            
+            velH = 3f;
+            lastDashH = Time.time;
+            
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D other)
@@ -145,16 +199,32 @@ public class playerMovement : MonoBehaviour
         if (other.gameObject.CompareTag("eWind"))
         {
             eWind = true;
-            wind = 0.2f;
+            wind = 0.3f;
         }
         if (other.gameObject.CompareTag("mouse1Wind"))
         {
             mouse1Wind = true;
-            wind = 0.2f;
+            wind = 0.3f;
         }
-        if(other.gameObject.CompareTag("slippy"))
+        if (other.gameObject.CompareTag("slippy"))
         {
-            slippy = true;
+            slippyCollision = true;
+        }
+        if (other.gameObject.CompareTag("eAdvMovV"))
+        {
+            eAdvMovV = true;
+        }
+        if (other.gameObject.CompareTag("mouse1AdvMovV"))
+        {
+            mouse1AdvMovV = true;
+        }
+        if (other.gameObject.CompareTag("qAdvMovH"))
+        {
+            qAdvMovH = true;
+        }
+        if (other.gameObject.CompareTag("mouse0AdvMovH"))
+        {
+            mouse0AdvMovH = true;
         }
     }
 
@@ -212,7 +282,23 @@ public class playerMovement : MonoBehaviour
         } 
         if (other.gameObject.CompareTag("slippy"))
         {
-            slippy = false;
+            slippyCollision = false;
+        }
+        if (other.gameObject.CompareTag("eAdvMovV"))
+        {
+            eAdvMovV = false;
+        }
+        if (other.gameObject.CompareTag("mouse1AdvMovV"))
+        {
+            mouse1AdvMovV = false;
+        }
+        if (other.gameObject.CompareTag("qAdvMovH"))
+        {
+            qAdvMovH = false;
+        }
+        if (other.gameObject.CompareTag("mouse0AdvMovH"))
+        {
+            mouse0AdvMovH = false;
         }
     }
 
