@@ -5,6 +5,7 @@ public class pauseMenu : MonoBehaviour
 {
 
     public GameObject PauseMenu;
+    public GameObject UI;
 
     void Start()
     {
@@ -18,14 +19,17 @@ public class pauseMenu : MonoBehaviour
         {
             if (!PauseMenu.activeSelf)
             {
-                Time.timeScale = 0f;
+                Time.timeScale = 0f; 
+
                 PauseMenu.SetActive(true);
+                UI.SetActive(false);
                 Cursor.visible = true;
             }
             else
             {
                 Time.timeScale = 1f;
                 PauseMenu.SetActive(false);
+                UI.SetActive(true);
                 Cursor.visible = false;
             }
         } 
@@ -40,6 +44,7 @@ public class pauseMenu : MonoBehaviour
     {
         Time.timeScale = 1f;
         PauseMenu.SetActive(false);
+        UI.SetActive(true);
         Cursor.visible = false;
     }
 
